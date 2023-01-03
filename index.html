@@ -9,8 +9,9 @@
 <body>
 	<div class="inputbox">
 		<p class="base-text">Введите ключевые слова</p>
-		<input type="text">
-		<div class="button">Генерировать</div>
+		<input id="inputik" type="text">
+		<div onclick="generate()" class="button">Генерировать</div>
+		<p id="demo"></p>
 	</div>
 	<section>
   		<canvas id="pretty-bg" width="375" height="216">
@@ -18,6 +19,12 @@
 	</section>
 </body>
 <style>
+
+	#demo
+	{
+		color:white;
+	}
+
 	*{
 		margin: 0;
 		padding:  0;
@@ -53,17 +60,107 @@
 	    /* margin-right: auto; */
 	    position: absolute;
 	    z-index: 999999;
+
+		left: 33%;
+		top: 40%;
 	}
 
 	input{
-		    width: 300px;
-    border-radius: 5px;
-    height: 30px;
-    border: none;
+		width: 300px;
+		border-radius: 5px;
+		height: 30px;
+		border: none;
+	}
+
+	.button
+	{
+		margin-top:15px;
+		background: white;
+		width: 200px;
+		cursor: pointer;
+		margin-left: 30%;
+		height: 30px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 5px;
+		background-color: brown;
+		color:white;
+		transition: all 0.5s;
+	}
+
+	.button:hover
+	{
+		transform: scale(1.2);
+		transition: all 0.5s;
+		background-color: rgb(139, 35, 35);
 	}
 </style>
 <script src="bg.js"></script>
 <script>
-	
+
+	var i = 0;
+	var txt = `name = '';\n
+surname = '';
+age = 0;
+@bot.message_handler(content_types=['text'])
+def start(message):
+    if message.text == '/reg':
+        bot.send_message(message.from_user.id, "Как тебя зовут?");
+        bot.register_next_step_handler(message, get_name); #следующий шаг – функция get_name
+    else:
+        bot.send_message(message.from_user.id, 'Напиши /reg');
+
+def get_name(message): #получаем фамилию
+    global name;
+    name = message.text;
+    bot.send_message(message.from_user.id, 'Какая у тебя фамилия?');
+    bot.register_next_step_handler(message, get_surnme);
+
+def get_surname(message):
+    global surname;
+    surname = message.text;
+    bot.send_message('Сколько тебе лет?');
+    bot.register_next_step_handler(message, get_age);
+
+def get_age(message):
+    global age;
+    while age == 0: #проверяем что возраст изменился
+        try:
+             age = int(message.text) #проверяем, что возраст введен корректно
+        except Exception:
+             bot.send_message(message.from_user.id, 'Цифрами, пожалуйста');
+      bot.send_message(message.from_user.id, 'Тебе '+str(age)+' лет, тебя зовут '+name+' '+surname+'?')`; /* Текст */
+	var speed = 20; /* Скорость/длительность эффекта в миллисекундах */
+
+	function typeWriter() {
+		if (i < txt.length) {
+			document.getElementById("demo").innerHTML += txt.charAt(i);
+			i++;
+			setTimeout(typeWriter, speed);
+		}
+	}
+
+	function generate()
+	{
+
+		typeWriter();
+
+		let text = document.getElementById("inputik").value;
+
+		if(text != "")
+		{
+			if(text.indexOf("магазин") != -1 || text.indexOf("shop") != -1 || text.indexOf("товары") != -1 || text.indexOf("продукция") != -1)
+			{
+
+			}
+
+			if(text.indexOf("заявка") != -1 || text.indexOf("сбор") != -1 || text.indexOf("заявочки") != -1 || text.indexOf("проверка") != -1)
+			{
+
+			}
+
+		}
+	}
 </script>
 </html>
