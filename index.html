@@ -7,18 +7,36 @@
 	<title>Document</title>
 </head>
 <body>
-	<div class="inputbox">
-		<p class="base-text">Введите ключевые слова</p>
-		<input id="inputik" type="text">
-		<div onclick="generate()" class="button">Генерировать</div>
-		<p id="demo"></p>
-	</div>
 	<section>
+		<div class="inputbox">
+			<p class="base-text">Введите ключевые слова</p>
+			<input id="inputik" type="text">
+			<div onclick="generate()" class="button">Генерировать</div>
+			<p align="left" id="demo"></p>
+		</div>
   		<canvas id="pretty-bg" width="375" height="216">
   		</canvas>
 	</section>
 </body>
 <style>
+
+	body
+	{
+		background: black;
+	}
+
+	body::-webkit-scrollbar {
+  		width: 10px;               /* ширина scrollbar */
+	}
+
+	body::-webkit-scrollbar-track {
+  		background: black;        /* цвет дорожки */
+	}
+
+	body::-webkit-scrollbar-thumb {
+	  background-color: green;    /* цвет плашки */
+
+	}
 
 	#demo
 	{
@@ -33,14 +51,16 @@
 	section {
 	  position: relative;
 	  width: 100%;
-	  height: 100vh;
+	  min-height: 100vh;
+	  height: auto;
 	  background: black;
 	}
 
 	#pretty-bg {
 	  position: absolute;
 	  width: 100%;
-	  height: 100%;
+	  min-height: 100%;
+	  height: auto;
 	  top: 0;
 	  left: 0;
 	  z-index: 2;
@@ -72,6 +92,7 @@
 		border: none;
 	}
 
+
 	.button
 	{
 		margin-top:15px;
@@ -95,72 +116,564 @@
 		transition: all 0.5s;
 		background-color: rgb(139, 35, 35);
 	}
+
+	#demo
+	{
+		margin-top: 50px;
+		color: green;
+	}
+
 </style>
 <script src="bg.js"></script>
 <script>
 
 	var i = 0;
-	var txt = `name = '';\n
-surname = '';
-age = 0;
-@bot.message_handler(content_types=['text'])
-def start(message):
-    if message.text == '/reg':
-        bot.send_message(message.from_user.id, "Как тебя зовут?");
-        bot.register_next_step_handler(message, get_name); #следующий шаг – функция get_name
-    else:
-        bot.send_message(message.from_user.id, 'Напиши /reg');
+	var speed = 5; /* Скорость/длительность эффекта в миллисекундах */
 
-def get_name(message): #получаем фамилию
-    global name;
-    name = message.text;
-    bot.send_message(message.from_user.id, 'Какая у тебя фамилия?');
-    bot.register_next_step_handler(message, get_surnme);
+	function typeWriter(text) {
 
-def get_surname(message):
-    global surname;
-    surname = message.text;
-    bot.send_message('Сколько тебе лет?');
-    bot.register_next_step_handler(message, get_age);
+		if (i < text.length) {
 
-def get_age(message):
-    global age;
-    while age == 0: #проверяем что возраст изменился
-        try:
-             age = int(message.text) #проверяем, что возраст введен корректно
-        except Exception:
-             bot.send_message(message.from_user.id, 'Цифрами, пожалуйста');
-      bot.send_message(message.from_user.id, 'Тебе '+str(age)+' лет, тебя зовут '+name+' '+surname+'?')`; /* Текст */
-	var speed = 20; /* Скорость/длительность эффекта в миллисекундах */
-
-	function typeWriter() {
-		if (i < txt.length) {
-			document.getElementById("demo").innerHTML += txt.charAt(i);
-			i++;
-			setTimeout(typeWriter, speed);
+			if(text.charAt(i) == "|")
+			{
+				document.getElementById("demo").innerHTML += "<br>";
+				i++;
+				setTimeout(function() { typeWriter(text);}, speed);
+			}
+			else
+			{
+				document.getElementById("demo").innerHTML += text.charAt(i);
+				i++;
+				setTimeout(function() { typeWriter(text);}, speed);
+				window.scrollTo(0, document.body.scrollHeight);
+			}
 		}
 	}
 
 	function generate()
 	{
 
-		typeWriter();
+		document.getElementById("demo").innerHTML = "";
+		i = 0;
 
 		let text = document.getElementById("inputik").value;
 
 		if(text != "")
 		{
-			if(text.indexOf("магазин") != -1 || text.indexOf("shop") != -1 || text.indexOf("товары") != -1 || text.indexOf("продукция") != -1)
+			switch(gettype(text))
 			{
+				case 1:
+					typeWriter(`** Main.py ** ||
 
+					from aiogram import Bot, types|
+					from aiogram.dispatcher import Dispatcher|
+					from aiogram.utils import executor|
+					from aiogram.utils import exceptions|
+					from aiogram.dispatcher import filters
+					from aiogram.utils.callback_data import CallbackData|
+					from aiogram.types import ReplyKeyboardRemove, \|
+					    ReplyKeyboardMarkup, KeyboardButton, \|
+					    InlineKeyboardMarkup, InlineKeyboardButton, InputFile|
+					from keyboards import *|
+					from database import *|
+					from settings import *|
+					from messages import *|
+					|
+					# Доп библиотеки|
+					import sqlite3|
+					import logger|
+					import time||
+
+					# Создание класса бота|
+					bot = Bot(token=TOKEN)|
+					dp = Dispatcher(bot)|
+					db = Database_class()||
+
+					@dp.message_handler(commands=['start'])|
+					async def process_start_command(message: types.Message):||
+
+					    if(db.get(f"SELECT * FROM users WHERE userid = {message.from_user.id}") == None):|
+					        db.change(f"INSERT INTO users VALUES(NULL,{message.from_user.id},'{message.from_user.username}','')")||
+					    
+					    photo = open(hello_photo_url,"rb")|
+					    if(message.from_user.id == ADMIN):|
+					        await bot.send_photo(message.from_user.id,photo,caption=hello_message,reply_markup=astart_btn,parse_mode=types.ParseMode.HTML)|
+					    else:|
+					        await bot.send_photo(message.from_user.id,photo,caption=hello_message,reply_markup=start_btn,parse_mode=types.ParseMode.HTML)||
+					        
+					@dp.callback_query_handler(text="back_menu")|
+					async def callback_query(call: types.CallbackQuery):|
+					    photo = types.InputMedia(media=InputFile(hello_photo_url), caption=hello_message)|
+					    if(call.from_user.id == ADMIN):|
+					        await call.message.edit_media(photo,reply_markup=astart_btn)|
+					    else:|
+					        await call.message.edit_media(photo,reply_markup=start_btn)||
+					    
+					@dp.callback_query_handler(text="aback")|
+					async def callback_query(call: types.CallbackQuery):|
+					    photo = types.InputMedia(media=InputFile(hello_photo_url), caption=hello_message)|
+					    await call.message.edit_media(photo,reply_markup=astart_btn)||
+					    
+					    db.change(f"UPDATE users SET state = '' WHERE userid = {call.from_user.id}")||
+
+					@dp.callback_query_handler(text="callback_contacts")|
+					async def callback_query(call: types.CallbackQuery):|
+					    photo = types.InputMedia(media=InputFile(contacts_photo_url), caption=contacts_message)|
+					    await call.message.edit_media(photo,reply_markup=back_menu)||
+					    
+					@dp.callback_query_handler(text="callback_about")|
+					async def callback_query(call: types.CallbackQuery):|
+					    photo = types.InputMedia(media=InputFile(about_photo_url), caption=about_message)|
+					    await call.message.edit_media(photo,reply_markup=back_menu)||
+					    
+					@dp.callback_query_handler(text="callback_shop")|
+					async def callback_query(call: types.CallbackQuery):|
+					    photo = types.InputMedia(media=InputFile(shop_photo_url), caption=shop_message)||
+					    
+					    shop_button = InlineKeyboardMarkup(row_width=2)||
+					    
+					    for i in db.get("SELECT * FROM category",False):|
+					        shop_button.add(InlineKeyboardButton(i[1],callback_data=f"openCategory_{i[0]}"))||
+					    
+					    shop_button.add(InlineKeyboardButton("Назад",callback_data="back_menu"))||
+					    
+					    await call.message.edit_media(photo,reply_markup=shop_button)||
+
+					@dp.callback_query_handler(filters.Regexp("openCategory_.*"))|
+					async def callback_query(call: types.CallbackQuery):||
+
+					    data = call.data.split("_")[1]||
+
+					    category = db.get(f"SELECT * FROM category WHERE id = {data}")||
+
+					    photo = types.InputMedia(media=InputFile(shop_photo_url), caption=category[1])||
+					    
+					    shop_button = InlineKeyboardMarkup(row_width=2)||
+					    
+					    shop_button.add(|
+					        InlineKeyboardButton("Просмотр товара",callback_data=f"showitem_{data}"),|
+					        InlineKeyboardButton("Список товара",callback_data=f"openListItem_{data}"),|
+					        InlineKeyboardButton("Назад",callback_data="callback_shop"),|
+					    )||
+					    
+					    await call.message.edit_media(photo,reply_markup=shop_button)||
+					    
+					@dp.callback_query_handler(filters.Regexp("openListItem_.*"))|
+					async def callback_query(call: types.CallbackQuery):||
+
+					    data = call.data.split("_")[1]||
+
+					    category = db.get(f"SELECT * FROM category WHERE id = {data}")||
+
+					    photo = types.InputMedia(media=InputFile(shop_photo_url), caption=category[1])||
+					    
+					    shop_button = InlineKeyboardMarkup(row_width=2)||
+					    
+					    for i in db.get(f"SELECT * FROM items WHERE category = {data}",False):|
+					        shop_button.add(InlineKeyboardButton(i[2],callback_data=f"showitem_{i[1]}_{i[0]}"))||
+					    
+					    shop_button.add(InlineKeyboardButton("Назад",callback_data="callback_shop"))||
+					    
+					    await call.message.edit_media(photo,reply_markup=shop_button)||
+					    
+					@dp.callback_query_handler(filters.Regexp("showitem_.*"))|
+					async def callback_query(call: types.CallbackQuery):||
+					    
+					    data = call.data.split("_")||
+					    
+					    if(len(data) == 2):||
+					        
+					        item = db.get(f"SELECT * FROM items WHERE category = {data[1]}")||
+					        
+					        itemCount = db.get(f"SELECT count(*) FROM items WHERE category = {data[1]}")[0]||
+
+					        photo = types.InputMedia(media=InputFile("img/"+item[4]), caption=f"Наименование: {item[2]}\nЦена: {item[3]}")||
+					        
+					        shop_button = InlineKeyboardMarkup(row_width=3)|    
+					        if(itemCount > 1):|
+					            shop_button.add(|
+					                InlineKeyboardButton("Купить",callback_data=f"buyitem_{data[1]}_{item[0]}"),|
+					                InlineKeyboardButton(">>>",callback_data=f"next_{data[1]}_{item[0]+1}")|
+					            )|
+					        else:|
+					            shop_button.add(InlineKeyboardButton("Купить",callback_data=f"buyitem_{data[1]}_{item[0]}"))|
+					        shop_button.add(InlineKeyboardButton("Назад",callback_data="callback_shop"))||
+
+					        
+					        await call.message.edit_media(photo,reply_markup=shop_button)||
+					        
+					    elif(len(data) == 3):||
+					                
+					        item = db.get(f"SELECT * FROM items WHERE id = {data[2]} and category = {data[1]}")||
+					        
+					        isNext = db.get(f"SELECT * FROM items WHERE id > {data[2]} and category = {data[1]} LIMIT 1")|
+					        isBack = db.get(f"SELECT * FROM items WHERE id < {data[2]} and category = {data[1]} ORDER BY id DESC LIMIT 1")||
+					        
+					        photo = types.InputMedia(media=InputFile("img/"+item[4]), caption=f"Наименование: {item[2]}\nЦена: {item[3]}")||
+					        
+					        shop_button = InlineKeyboardMarkup(row_width=3)||
+					        
+					        if(isBack != None and isNext != None):|
+					            shop_button.add(|
+					                InlineKeyboardButton("<<<",callback_data=f"next_{data[1]}_{isBack[0]}"),|
+					                InlineKeyboardButton("Купить",callback_data=f"buyitem_{data[1]}_{data[2]}"),|
+					                InlineKeyboardButton(">>>",callback_data=f"next_{data[1]}_{isNext[0]}")|
+					            )|
+					        else:|
+					            if(isBack != None):|
+					                shop_button.add(|
+					                    InlineKeyboardButton("<<<",callback_data=f"next_{data[1]}_{isBack[0]}"),|
+					                    InlineKeyboardButton("Купить",callback_data=f"buyitem_{data[1]}_{data[2]}"),|
+					                )|
+					            elif(isNext != None):|
+					                shop_button.add(|
+					                    InlineKeyboardButton("Купить",callback_data=f"buyitem_{data[1]}_{data[2]}"),|
+					                    InlineKeyboardButton(">>>",callback_data=f"next_{data[1]}_{isNext[0]}")|
+					                )||
+					            
+					        shop_button.add(InlineKeyboardButton("Назад",callback_data="callback_shop"))||
+					        
+					        await call.message.edit_media(photo,reply_markup=shop_button)||
+
+					    
+					@dp.callback_query_handler(filters.Regexp("buyitem_.*"))|
+					async def callback_query(call: types.CallbackQuery):||
+					    
+					    data = call.data.split("_")||
+
+					    item = db.get(f"SELECT * FROM items WHERE id = {data[2]} and category = {data[1]}")|
+					    category = db.get(f"SELECT * FROM category WHERE id = {data[1]}")|
+
+					    photo = types.InputMedia(media=InputFile("img/"+item[4]), caption=f"!!! Вы уверены что хотите сделать заказ?\n\nТовар: {item[2]}\nРаздел: {category[1]}\nЦена: {item[3]}\n\n")||
+
+					    shop_button = InlineKeyboardMarkup(row_width=1)   | 
+					    shop_button.add(|
+					        InlineKeyboardButton("Да",callback_data=f"t2byitem_{data[1]}_{data[2]}"),|
+					        InlineKeyboardButton("Назад",callback_data="callback_shop")|
+					    )||
+
+					    await call.message.edit_media(photo,reply_markup=shop_button)|
+					 
+					@dp.callback_query_handler(filters.Regexp("t2byitem_.*"))|
+					async def callback_query(call: types.CallbackQuery):||
+					    
+					    data = call.data.split("_")||
+
+					    item = db.get(f"SELECT * FROM items WHERE id = {data[2]} and category = {data[1]}")|
+					    category = db.get(f"SELECT * FROM category WHERE id = {data[1]}")||
+
+					    db.change(f"INSERT INTO orders VALUES(NULL,{data[2]},{call.from_user.id})")|
+					    order = db.get(f"SELECT id FROM orders ORDER BY id DESC LIMIT 1")[0]|
+
+					    photo = types.InputMedia(media=InputFile("img/"+item[4]), caption=f"Заказ успешно оформлен\n\nНомер заказа: #{order}\nТовар: {item[2]}\nРаздел: {category[1]}\nЦена: {item[3]}\n\n"+offer)||
+
+					    t2shop_button = InlineKeyboardMarkup(row_width=1)|
+					    t2shop_button.add(|
+					        InlineKeyboardButton("Назад",callback_data="callback_shop")|
+					    )||
+
+					    await call.message.edit_media(photo,reply_markup=t2shop_button)|
+					    await bot.send_message(ADMIN,f"Заказ успешно оформлен\n\nНомер заказа: #{order}\nПользователь: @{call.from_user.username}\nТовар: {item[2]}\nРаздел: {category[1]}\nЦена: {item[3]}")||
+
+
+					@dp.callback_query_handler(filters.Regexp("next.*"))|
+					async def callback_query(call: types.CallbackQuery):||
+					    
+					    data = call.data.split("_")||
+					    
+					    item = db.get(f"SELECT * FROM items WHERE id = {data[2]} and category = {data[1]}")||
+					    
+					    isNext = db.get(f"SELECT * FROM items WHERE id > {data[2]} and category = {data[1]} LIMIT 1")|
+					    isBack = db.get(f"SELECT * FROM items WHERE id < {data[2]} and category = {data[1]} ORDER BY id DESC LIMIT 1")||
+					    
+					    print(isNext,isBack)||
+					    
+					    photo = types.InputMedia(media=InputFile("img/"+item[4]), caption=f"Наименование: {item[2]}\nЦена: {item[3]}")||
+					    
+					    shop_button = InlineKeyboardMarkup(row_width=3)||
+
+					    
+					    if(isBack != None and isNext != None):|
+					        shop_button.add(|
+					            InlineKeyboardButton("<<<",callback_data=f"next_{data[1]}_{isBack[0]}"),|
+					            InlineKeyboardButton("Купить",callback_data=f"buyitem_{data[1]}_{data[2]}"),|
+					            InlineKeyboardButton(">>>",callback_data=f"next_{data[1]}_{isNext[0]}")|
+					        )|
+					    else:|
+					        if(isBack != None):|
+					            shop_button.add(|
+					                InlineKeyboardButton("<<<",callback_data=f"next_{data[1]}_{isBack[0]}"),|
+					                InlineKeyboardButton("Купить",callback_data=f"buyitem_{data[1]}_{data[2]}"),|
+					            )|
+					        elif(isNext != None):|
+					            shop_button.add(|
+					                InlineKeyboardButton("Купить",callback_data=f"buyitem_{data[1]}_{data[2]}"),|
+					                InlineKeyboardButton(">>>",callback_data=f"next_{data[1]}_{isNext[0]}")|
+					            )||
+					        
+					    shop_button.add(InlineKeyboardButton("Назад",callback_data="callback_shop"))||
+					    
+					    await call.message.edit_media(photo,reply_markup=shop_button)||
+					 
+					@dp.callback_query_handler(text="stats")|
+					async def callback_query(call: types.CallbackQuery):||
+					    
+					    users = db.get("SELECT COUNT(*) FROM users")[0]|
+					    orders = db.get("SELECT COUNT(*) FROM orders")[0]||
+					    
+					    photo = types.InputMedia(media=InputFile(contacts_photo_url), caption=f"Статистика бота\n\nПользователей за все время: {users}\nОформлено заказов: {orders}")|
+					    await call.message.edit_media(photo,reply_markup=back_menu)||
+
+					 
+					if __name__ == '__main__':|
+					    executor.start_polling(dp)|`);
+					break;
+				case 2:
+					typeWriter(`from aiogram import Bot, types|
+					from aiogram.dispatcher import Dispatcher|
+					from aiogram.utils import executor|
+					from aiogram.utils import exceptions|
+					from aiogram.dispatcher import filters|
+					from aiogram.utils.callback_data import CallbackData|
+					from aiogram.types import ReplyKeyboardRemove, \|
+					    ReplyKeyboardMarkup, KeyboardButton, \|
+					    InlineKeyboardMarkup, InlineKeyboardButton, InputFile||
+
+					# Доп библиотеки| 
+					import asyncio|
+					import sqlite3||||
+
+
+
+
+					Admins = [317446996]||
+
+					Chat_1 = 317446996|
+					Chat_2 = 317446996|
+					Chat_3 = -1001767799860|
+|
+					Token = "TOKEN"||
+
+					# База данных|
+					con = sqlite3.connect("database.db")|
+					cur = con.cursor()||
+
+					cur.execute("CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY AUTOINCREMENT, userid BIGINT, auth BOOLEAN, state TEXT, m1 INT, m2 INT, m3 INT)")|
+					cur.execute("CREATE TABLE IF NOT EXISTS duty(id INTEGER PRIMARY KEY AUTOINCREMENT, userid TEXT, money FLOAT)")||
+
+					# Создание класса бота|
+					bot = Bot(token=Token)|
+					dp = Dispatcher(bot)||
+
+
+					@dp.message_handler(commands=['start'])|
+					async def process_start_command(message: types.Message): #для продолжения отправь имя пользователя @username||
+
+					    cur.execute(f"SELECT * FROM users WHERE userid = {message.from_user.id}")
+					    result = cur.fetchone()|
+					    print(result)|
+					    if(result == None):|
+					        await bot.send_message(message.from_user.id,"🎩 Добро пожаловать, функции бота ограничены - ожидайте активации")||
+
+							# Отправка данных всех админам|
+					        for i in range(0,len(Admins)):|
+					            try:||
+
+					                admin_approve = InlineKeyboardMarkup()|
+					                admin_approve.add(|
+					                InlineKeyboardButton("Выдать доступ 📨", |callback_data=f"approve_{message.from_user.id}")|
+								    )||
+
+					                await bot.send_message(Admins[i],f"🎩 В бота зашел новый пользователь - @{message.from_user.username}\n\nЖелаете выдать ему доступ 🕵🏻‍♀️ к боту?", reply_markup=admin_approve)||
+					                
+					                cur.execute(f"INSERT INTO users VALUES(NULL,{message.from_user.id},0,'',0,0,0)")|
+					                con.commit()|
+					            except: |
+					                pass
+||
+					    if message.from_user.id in Admins:|
+					        admin_menu = ReplyKeyboardMarkup(resize_keyboard=True)|
+					        admin_menu.add(|
+					            KeyboardButton("🔥 топ"),|
+					        )||
+
+					        await bot.send_message(message.from_user.id,f"💠 Вы вошли как администратор",reply_markup=admin_menu)||
+
+					@dp.message_handler(text=['🔥 топ'])|
+					async def process_start_command(message: types.Message): #для продолжения отправь имя пользователя @username||
+
+						if message.from_user.id in Admins:||
+
+							messages = ""||
+
+							cur.execute(f"SELECT * FROM duty ORDER BY money")|
+							state = cur.fetchall()|
+							print(state)||
+
+							for i in range(0,len(state)):|
+								messages = messages + f"@{state[i][1]} - {state[i][2]}\n"||
+
+							await bot.send_message(message.from_user.id,"💠 "+messages+" руб")||
+
+					@dp.message_handler()|
+					async def echo_message(msg: types.Message):||
+
+						cur.execute(f"SELECT state FROM users WHERE userid = {msg.from_user.id}")|
+						state = cur.fetchone()[0]||
+
+						if msg.text.find("@") >= 0:||
+
+							select_month = InlineKeyboardMarkup(resize_keyboard=True, row_count=1)|
+							select_month.add(|
+							    InlineKeyboardButton("3 месяца", callback_data=f"month_3_{msg.text[1:]}_{msg.from_user.username}_{msg.from_user.id}"),|
+							    InlineKeyboardButton("6 месяцев", callback_data=f"month_6_{msg.text[1:]}_{msg.from_user.username}_{msg.from_user.id}"),|
+							    InlineKeyboardButton("12 месяцев", callback_data=f"month_12_{msg.text[1:]}_{msg.from_user.username}_{msg.from_user.id}")|
+							)||
+
+							await bot.send_message(msg.from_user.id,f"💠 Вы выбрали пользоватея {msg.text}, выберите сроки ниже",reply_markup=select_month)||
+
+						if state.find("setMoney") >= 0:|
+							userid = state.split("_")[1]||
+
+							await bot.send_message(userid,f"🎩 Вы были активированны, для продолжения отправь имя пользователя @username")|
+							await bot.send_message(msg.from_user.id,f"Доступ выдан ✅")||
+
+							money = msg.text.split(",")||
+
+							cur.execute(f"UPDATE users SET auth = 1, m1 = {money[0]}, m2 = {money[1]}, m3 = {money[2]} WHERE userid = {userid}")|
+							cur.execute(f"UPDATE users SET state = '' WHERE userid = {msg.from_user.id}")
+							con.commit()||
+		 
+					@dp.callback_query_handler(filters.Regexp("approve_.*"))|
+					async def callback_query(call: types.CallbackQuery):||
+
+						await call.message.edit_text(f"Введите цену для пользователя через запятую 100,200,300")||
+
+						userid = call.data.split("_")[1]||
+
+						cur.execute(f"UPDATE users SET state = 'setMoney_{userid}' WHERE userid = {call.from_user.id}")||
+						con.commit()||
+
+					@dp.callback_query_handler(filters.Regexp("give_.*"))|
+					async def callback_query(call: types.CallbackQuery):||
+
+						data = call.data.split("_")|
+						cur.execute(f"SELECT * FROM duty WHERE userid = '{data[1]}'")|
+						result = cur.fetchone()||
+
+						if(result == None):|
+							cur.execute(f"INSERT INTO duty VALUES(NULL,'{data[1]}',0)")|
+							con.commit()||
+
+						cur.execute(f"SELECT * FROM users WHERE userid = {data[2]}")|
+						result = cur.fetchone()||
+
+						if data[3] == "1":|
+							cur.execute(f"UPDATE duty SET money = {result[4]} + (SELECT money FROM duty WHERE userid = '{data[1]}') WHERE userid = '{data[1]}'")|
+						if data[3] == "2":|
+							cur.execute(f"UPDATE duty SET money = {result[5]} + (SELECT money FROM duty WHERE userid = '{data[1]}') WHERE userid = '{data[1]}'")|
+						if data[3] == "3":|
+							cur.execute(f"UPDATE duty SET money = {result[6]} + (SELECT money FROM duty WHERE userid = '{data[1]}') WHERE userid = '{data[1]}'")||
+
+						con.commit()||
+
+						await bot.send_message(call.from_user.id,f"✅ Отлично, заявка обработана")|
+						await bot.send_message(data[2],f"✅ Отлично, ваша заявка обработана")||
+
+
+					@dp.callback_query_handler(filters.Regexp("month_3_.*"))|
+					async def callback_query(call: types.CallbackQuery):|
+						await call.message.edit_text(f"✅ Отлично, заявка отправлена, ожидайте обработки")||
+
+						data = call.data.split("_")||
+
+						give = InlineKeyboardMarkup(resize_keyboard=True, row_count=1)|
+						give.add(|
+							InlineKeyboardButton("Выдать ✅", callback_data=f"give_{call.from_user.username}_{call.from_user.id}_1"),|
+						)||
+
+						cur.execute(f"SELECT m1 FROM users WHERE userid = {call.from_user.id}")|
+						result = cur.fetchone()[0]||
+
+						await bot.send_message(Chat_1,f"🔸 Новая заявка\n\n🎴 От: @{call.from_user.username}\n🃏 Для: @{data[2]}\n\n🕞 На 3 месяца ({result} руб)",reply_markup=give)||
+
+					@dp.callback_query_handler(filters.Regexp("month_6_.*"))|
+					async def callback_query(call: types.CallbackQuery):|
+						await call.message.edit_text(f"✅ Отлично, заявка отправлена, ожидайте обработки")||
+
+						data = call.data.split("_")||
+
+						give = InlineKeyboardMarkup(resize_keyboard=True, row_count=1)|
+						give.add(|
+							InlineKeyboardButton("Выдать ✅", callback_data=f"give_{call.from_user.username}_{call.from_user.id}_2"),|
+						)||
+
+						cur.execute(f"SELECT m2 FROM users WHERE userid = {call.from_user.id}")|
+						result = cur.fetchone()[0]||
+
+						await bot.send_message(Chat_2,f"🔸 Новая заявка\n\n🎴 От: @{call.from_user.username}\n🃏 Для: @{data[2]}\n\n🕞 На 6 месяцев ({result} руб)",reply_markup=give)||
+
+					@dp.callback_query_handler(filters.Regexp("month_12_.*"))|
+					async def callback_query(call: types.CallbackQuery):|
+						await call.message.edit_text(f"✅ Отлично, заявка отправлена, ожидайте обработки")||
+
+						data = call.data.split("_")||
+
+						give = InlineKeyboardMarkup(resize_keyboard=True, row_count=1)|
+						give.add(|
+							InlineKeyboardButton("Выдать ✅", callback_data=f"give_{call.from_user.username}_{call.from_user.id}_3"),|
+						)||
+
+						cur.execute(f"SELECT m3 FROM users WHERE userid = {call.from_user.id}")|
+						result = cur.fetchone()[0]||
+
+						await bot.send_message(Chat_3,f"🔸 Новая заявка\n\n🎴 От: @{call.from_user.username}\n🃏 Для: @{data[2]}\n\n🕞 На 12 месяцев ({result} руб)",reply_markup=give)||
+ 
+					if __name__ == '__main__':|
+					    executor.start_polling(dp)`);
+					break;
 			}
-
-			if(text.indexOf("заявка") != -1 || text.indexOf("сбор") != -1 || text.indexOf("заявочки") != -1 || text.indexOf("проверка") != -1)
-			{
-
-			}
-
 		}
+	}
+
+	function gettype(text)
+	{
+		let shops = ["магазин","shop","покупать","лавка","бутик","магазинчик","зоомагазин","маркета","онлайн-магазин","медиамаркет","массмаркет"];
+
+		let task = ["заявка","обращение","анкета","онлайн-заявка","заявок"];
+
+		let isShop = false;
+		let isSpecialShop = false;
+		let isTask = false;
+
+		for(var i = 0; i < shops.length; i++)
+		{
+			if(text.indexOf(shops[i]) != -1)
+			{
+				isShop = true;
+				break;
+			}
+		}
+
+		for(var i = 0; i < task.length; i++)
+		{
+			if(text.indexOf(task[i]) != -1)
+			{
+				isTask = true;
+				break;
+			}
+		}
+
+		if(isShop == true)
+		{
+			return 1;
+		}
+		if(isTask == true)
+		{
+			return 2;
+		}
+
+
 	}
 </script>
 </html>
