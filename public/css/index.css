@@ -1,0 +1,180 @@
+*
+{
+	font-family: 'Montserrat', sans-serif;
+}
+
+.nav-list
+{
+	list-style: none;
+	display: flex;
+}
+
+.nav-list > li
+{
+	padding-right: 10%;
+}
+
+.menu-fonts
+{
+	color: #2A2A2A;
+	font-style: normal;
+	font-weight: 500;
+	font-size: 16px;
+}
+
+.menu-fonts a
+{
+	text-decoration: none;
+	color: #2A2A2A;
+}
+
+.main-font
+{
+	color: #2A2A2A;
+	font-style: normal;
+	font-weight: 600;
+	font-size: 40px;
+}
+
+.main-font-second
+{
+	font-size: 20px;
+}
+
+.main-font-them
+{
+	color: #2A2A2A;
+	font-style: normal;
+	font-weight: 600;
+	font-size: 30px;
+}
+
+.main-font-second-them
+{
+	font-size: 15px;
+}
+
+
+.purple
+{
+	color: #9368EF;
+}
+
+.main-img
+{
+	width: 80%;
+}
+
+.main-button
+{
+	color: white;
+	font-weight: 500;
+	font-size: 16px;
+	background-color: #9368EF;
+	width: 35%;
+	height: 50px;
+	border-radius: 5px;
+	text-align: center;
+	line-height: 50px;
+	cursor: pointer;
+	transition: 0.5s;
+}
+
+.main-button:hover
+{
+	background-color: #8A61E2;
+	transform: scale(0.9);
+}
+
+.main-img-server
+{
+	width: 65%;
+}
+
+.item
+{
+	border: 3px solid #EAEBEF;
+	border-radius: 5px;
+	width: 23%;
+	height: 220px;
+	margin-right: 20px;
+	margin-bottom: 10px;
+	padding: 10px;
+}
+
+.item img
+{
+	width: 80%;
+}
+
+.items-list
+{
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.python-card-img
+{
+	width: 70% !important;
+	margin-left: 30px;
+	margin-top: 50px;
+	margin-bottom: 20px;
+}
+
+.php-card-img
+{
+	width: 45% !important;
+	margin-left: 50px;
+	margin-top: 40px;
+	margin-bottom: 15px;
+}
+
+.flask-card-img
+{
+	width: 45% !important;
+	margin-left: 50px;
+	margin-top: 27px;
+}
+
+.mysql-card-img
+{
+	width: 45% !important;
+	margin-left: 50px;
+	margin-top: 30px;
+	margin-bottom: 15px;
+}
+
+.sqlite-card-img
+{
+	width: 45% !important;
+	margin-left: 50px;
+	margin-top: 40px;
+	margin-bottom: 17px;
+}
+
+.mongodb-card-img
+{
+	width: 45% !important;
+	margin-left: 50px;
+	margin-top: 40px;
+	margin-bottom: 17px;
+}
+
+select
+{
+	border-radius: 4px;
+    padding: 3px;
+    border-color: #EAEBEF;
+    color: #2A2A2A;
+    width: 100%;
+}
+
+.main-img-grafic
+{
+	width: 55%;
+}
+
+.main-img-pay
+{
+	width: 85%;
+}
