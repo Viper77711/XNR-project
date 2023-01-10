@@ -14,6 +14,18 @@
 	padding-right: 10%;
 }
 
+.nav-link
+{
+	color: #2A2A2A;
+	transition: 0.4s;
+}
+
+.nav-link:hover
+{
+	color: #9368EF;
+	transition: 0.4s;
+}
+
 .menu-fonts
 {
 	color: #2A2A2A;
